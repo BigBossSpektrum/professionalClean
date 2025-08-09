@@ -1,6 +1,74 @@
 {% extends 'base.html' %}
 {% block title %}Inicio | Professional Clean{% endblock %}
+{% load static %}
 {% block content %}
+
+
+{% comment %} Sección dinámica de servicios premium {% endcomment %}
+
+<section class="premium-services py-4 text-center" style="background: linear-gradient(90deg,#00c3ff 0,#fff 100%); width:100vw; position:relative; left:50%; right:50%; margin-left:-50vw; margin-right:-50vw;">
+    <div class="container">
+        <h2 class="fw-bold mb-3" style="color:#000;">¡Servicios Premium Destacados!</h2>
+        <div class="row justify-content-center">
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3 d-flex align-items-stretch">
+                <div class="card bg-dark text-white shadow w-100" style="min-height:220px;">
+                    <div class="card-body d-flex flex-column justify-content-center align-items-center text-center">
+                        <div style="width:60px; height:60px; display:flex; align-items:center; justify-content:center; background:#fff; border-radius:50%; border:2px solid #00c3ff; margin-bottom:10px;">
+                            <img src="/static/images/24hrs.png" alt="24hrs" style="width:38px; height:38px; object-fit:contain; display:block;">
+                        </div>
+                        <span class="fs-5 fw-bold mb-2">Servicio premium las 24hrs</span>
+                        <span class="small">Disponibilidad total para tu comodidad.</span>
+                    </div>
+                </div>  
+            </div>
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3 d-flex align-items-stretch">
+                <div class="card bg-dark text-white shadow w-100" style="min-height:220px;">
+                    <div class="card-body d-flex flex-column justify-content-center align-items-center text-center">
+                        <div style="width:60px; height:60px; display:flex; align-items:center; justify-content:center; background:#fff; border-radius:50%; border:2px solid #00c3ff; margin-bottom:10px;">
+                            <img src="/static/images/garantia.png" alt="Garantía" style="width:38px; height:38px; object-fit:contain; display:block;">
+                        </div>
+                        <span class="fs-5 fw-bold mb-2">Servicio garantizado</span>
+                        <span class="small">Calidad y satisfacción asegurada.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3 d-flex align-items-stretch">
+                <div class="card bg-dark text-white shadow w-100" style="min-height:220px;">
+                    <div class="card-body d-flex flex-column justify-content-center align-items-center text-center">
+                        <div style="width:60px; height:60px; display:flex; align-items:center; justify-content:center; background:#fff; border-radius:50%; border:2px solid #00c3ff; margin-bottom:10px;">
+                            <img src="/static/images/personalizado.png" alt="Personalizado" style="width:38px; height:38px; object-fit:contain; display:block;">
+                        </div>
+                        <span class="fs-5 fw-bold mb-2">Atención personalizada</span>
+                        <span class="small">Nos adaptamos a tus necesidades.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3 d-flex align-items-stretch">
+                <div class="card bg-dark text-white shadow w-100" style="min-height:220px;">
+                    <div class="card-body d-flex flex-column justify-content-center align-items-center text-center">
+                        <div style="width:60px; height:60px; display:flex; align-items:center; justify-content:center; background:#fff; border-radius:50%; border:2px solid #00c3ff; margin-bottom:10px;">
+                            <img src="/static/images/ecologico.png" alt="Ecológico" style="width:38px; height:38px; object-fit:contain; display:block;">
+                        </div>
+                        <span class="fs-5 fw-bold mb-2">Limpieza ecológica</span>
+                        <span class="small">Productos y procesos amigables con el ambiente.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3 d-flex align-items-stretch">
+                <div class="card bg-dark text-white shadow w-100" style="min-height:220px;">
+                    <div class="card-body d-flex flex-column justify-content-center align-items-center text-center">
+                        <div style="width:60px; height:60px; display:flex; align-items:center; justify-content:center; background:#fff; border-radius:50%; border:2px solid #00c3ff; margin-bottom:10px;">
+                            <img src="/static/images/rapido.png" alt="Rápido" style="width:38px; height:38px; object-fit:contain; display:block;">
+                        </div>
+                        <span class="fs-5 fw-bold mb-2">Respuesta rápida</span>
+                        <span class="small">Soluciones inmediatas a tu solicitud.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
 <section class="landing text-center py-5">
     <h2>Bienvenido a Professional Clean</h2>
     <p>Expertos en servicios de limpieza para hogares y empresas. ¡Confía en nosotros para un ambiente impecable!</p>
