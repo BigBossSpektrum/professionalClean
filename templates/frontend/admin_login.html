@@ -1,26 +1,83 @@
-{% extends 'base.html' %}
-{% block title %}Login Administrador | Professional Clean{% endblock %}
-{% block content %}
-<div class="container py-5">
-    <h2 class="mb-4">Acceso Administrador</h2>
-    <form method="post" class="row g-3">
-        {% csrf_token %}
-        <div class="col-12">
-            <input type="text" name="username" class="form-control" placeholder="Usuario" required>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Administrador | Professional Clean</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    {% load static %}
+    <style>
+        body {
+            background: url('{% static "images/background_admin_login.png" %}') no-repeat center center fixed;
+            background-size: cover;
+        }
+        .bubble-login {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255,255,255,0.97);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            border-radius: 2rem;
+            width: 600px;
+            max-width: 95vw;
+            z-index: 1000;
+            display: flex;
+            overflow: hidden;
+        }
+        .bubble-login-info {
+            background: linear-gradient(135deg, #0d6efd 60%, #6c757d 100%);
+            color: #fff;
+            padding: 2rem 1.5rem;
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .bubble-login-form {
+            padding: 2rem 1.5rem;
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        @media (max-width: 700px) {
+            .bubble-login {
+                flex-direction: column;
+                width: 95vw;
+            }
+            .bubble-login-info, .bubble-login-form {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bubble-login shadow-lg">
+        <div class="bubble-login-info d-flex flex-column justify-content-center align-items-start">
+            <h2 class="mb-3">Acceso Administrador</h2>
+            <p>Bienvenido al panel de administración de <strong>Professional Clean</strong>.</p>
+            <ul class="list-unstyled">
+                <li class="mb-2"><i class="bi bi-gear-fill me-2"></i>Gestiona los servicios y sus imágenes.</li>
+                <li class="mb-2"><i class="bi bi-pencil-square me-2"></i>Modifica la sección de usuario.</li>
+                <li class="mb-2"><i class="bi bi-shield-lock me-2"></i>Protege la información de tu negocio.</li>
+            </ul>
         </div>
-        <div class="col-12">
-            <input type="password" name="password" class="form-control" placeholder="Contraseña" required>
+        <div class="bubble-login-form d-flex flex-column justify-content-center">
+            <form method="post" class="needs-validation" novalidate>
+                <div class="mb-3">
+                    <input type="text" name="username" class="form-control form-control-lg" placeholder="Usuario" required>
+                </div>
+                <div class="mb-3">
+                    <input type="password" name="password" class="form-control form-control-lg" placeholder="Contraseña" required>
+                </div>
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary btn-lg w-100">Ingresar</button>
+                </div>
+            </form>
         </div>
-        <div class="col-12">
-            <button type="submit" class="btn btn-primary">Ingresar</button>
-        </div>
-        {% if messages %}
-        <div class="col-12">
-            {% for message in messages %}
-            <div class="alert alert-danger">{{ message }}</div>
-            {% endfor %}
-        </div>
-        {% endif %}
-    </form>
-</div>
-{% endblock %}
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
