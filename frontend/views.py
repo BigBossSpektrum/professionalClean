@@ -1,3 +1,21 @@
+from django.core.mail import send_mail
+from django.http import JsonResponse
+def contacto_email(request):
+	if request.method == 'POST':
+		nombre = request.POST.get('nombre')
+		email = request.POST.get('email')
+		mensaje = request.POST.get('mensaje')
+		asunto = f'Nuevo mensaje de contacto de {nombre}'
+		cuerpo = f'Nombre: {nombre}\nEmail: {email}\nMensaje:\n{mensaje}'
+		send_mail(
+			asunto,
+			cuerpo,
+			email,  # El remitente será el usuario que envía el mensaje
+			[settings.DEFAULT_FROM_EMAIL],  # El destinatario es tu correo
+			fail_silently=False,
+		)
+		return JsonResponse({'success': True})
+	return JsonResponse({'success': False}, status=400)
 from django.contrib.auth.decorators import login_required
 
 @login_required(login_url='admin_login')

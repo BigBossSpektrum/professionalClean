@@ -1,3 +1,11 @@
+# Configuración de correo para envío de formularios
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'silvekerhernandez@gmail.com'  # Cambia por tu correo
+EMAIL_HOST_PASSWORD = 'hbpt eubb yiwr cgac'    # Cambia por tu contraseña o usa variable de entorno
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 """
 Django settings for profesionalClean project.
 

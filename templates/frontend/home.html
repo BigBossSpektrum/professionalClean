@@ -132,20 +132,62 @@
     <div class="mb-4 mx-auto" style="max-width:1000px; background:#222; border-radius:18px; box-shadow:0 2px 16px #00c3ff88; border:2px solid #00c3ff; padding:32px 24px;">
         <h3 class="mb-2 text-info fw-bold text-center text-uppercase" style="font-size:1.7rem; text-shadow:0 2px 8px #00c3ff, 0 0 2px #fff; letter-spacing:1px;">Tu opinión es importante</h3>
         <span class="d-block mb-3 text-white text-center" style="font-size:1.1rem;">Ayúdanos a mejorar nuestros servicios.</span>
-        <form class="row g-3">
+    <form class="row g-3" id="contactForm" method="post">
+        {% csrf_token %}
             <div class="col-md-6">
-                <input type="text" class="form-control" placeholder="Nombre" required>
+                <input type="text" class="form-control" name="nombre" placeholder="Nombre" required>
             </div>
             <div class="col-md-6">
-                <input type="email" class="form-control" placeholder="Email" required>
+                <input type="email" class="form-control" name="email" placeholder="Email" required>
             </div>
             <div class="col-12">
-                <textarea class="form-control" placeholder="Mensaje" required></textarea>
+                <textarea class="form-control" name="mensaje" placeholder="Mensaje" required></textarea>
             </div>
             <div class="col-12">
                 <button type="submit" class="btn btn-success">Enviar</button>
             </div>
         </form>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const form = this;
+        const data = new FormData(form);
+        fetch('{% url "contacto_email" %}', {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: data
+        })
+        .then(response => response.json())
+        .then(res => {
+            if (res.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Correo enviado!',
+                    text: 'Tu mensaje ha sido enviado con éxito. Pronto nos pondremos en contacto contigo.',
+                    confirmButtonColor: '#00c3ff',
+                });
+                form.reset();
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No se pudo enviar el mensaje. Intenta nuevamente.',
+                });
+            }
+        })
+        .catch(() => {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'No se pudo enviar el mensaje. Intenta nuevamente.',
+            });
+        });
+    });
+    </script>
 </section>
 {% endblock %}
