@@ -1,20 +1,9 @@
-{% block title %}Administrador | Professional Clean{% endblock %}
-{% block content %}
-<section>
-    <h2>Zona de Administrador</h2>
-    <form enctype="multipart/form-data">
-        <input type="text" placeholder="Nombre del servicio" required>
-        <textarea placeholder="Descripción del servicio" required></textarea>
-        <input type="file" accept="image/*" required>
-        <button type="submit">Cargar Servicio</button>
-    </form>
-</section>
-{% endblock %}
 {% extends 'base.html' %}
 {% block title %}Administrador | Professional Clean{% endblock %}
 {% block content %}
 <section class="py-5">
     <h2>Zona de Administrador</h2>
+    <a href="{% url 'admin_logout' %}" class="btn btn-danger mb-4">Cerrar sesión</a>
     <form method="post" enctype="multipart/form-data" class="row g-3">
         {% csrf_token %}
         <div class="col-12">
