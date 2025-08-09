@@ -1,4 +1,5 @@
 
+
 # Configuración segura de correo para producción
 import os
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
