@@ -167,10 +167,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',
-]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+# Si tienes archivos estáticos personalizados, descomenta la siguiente línea:
+# STATICFILES_DIRS = [BASE_DIR / 'static']
+# WhiteNoise settings para optimización
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_AUTOREFRESH = True
 
 # Media files (uploads)
 MEDIA_URL = '/media/'
