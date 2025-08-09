@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: profesionalclean-backend
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn profesionalClean.wsgi:application
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: profesionalClean.settings
+      - key: SECRET_KEY
+        value: "pon_aqui_tu_clave_secreta"
+      - key: EMAIL_HOST_USER
+        value: "pon_aqui_tu_correo"
+      - key: EMAIL_HOST_PASSWORD
+        value: "pon_aqui_tu_contraseña"

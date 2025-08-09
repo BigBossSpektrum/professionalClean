@@ -1,10 +1,12 @@
-# Configuración de correo para envío de formularios
+
+# Configuración segura de correo para producción
+import os
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
+EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'silvekerhernandez@gmail.com'  # Cambia por tu correo
-EMAIL_HOST_PASSWORD = 'hbpt eubb yiwr cgac'    # Cambia por tu contraseña o usa variable de entorno
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 """
 Django settings for profesionalClean project.
@@ -31,9 +33,41 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-fl*eo0zj*$wht+uqq-=qzz64u5d@d0!w%1uy%qo2xs)=%tjwcb'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
+ALLOWED_HOSTS = ['.onrender.com', 'localhost', '127.0.0.1']
+# Static files (CSS, JavaScript, Images)
+# WhiteNoise para servir archivos estáticos en producción
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-ALLOWED_HOSTS = []
+# Application definition
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    'whitenoise.runserver_nostatic',
+    'corsheaders',
+    'frontend',
+    'backend'
+]
+
+MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+# CORS para permitir peticiones externas (ajusta según tu frontend)
+CORS_ALLOW_ALL_ORIGINS = True
 
 
 # Application definition
@@ -45,11 +79,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'whitenoise.runserver_nostatic',
+    'corsheaders',
     'frontend',
     'backend'
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -142,3 +180,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Modelo de usuario personalizado
 AUTH_USER_MODEL = 'frontend.Usuario'
+
+# Gunicorn configuration
+import multiprocessing
+
+bind = "0.0.0.0:8000"
+workers = multiprocessing.cpu_count() * 2 + 1
+worker_class = "gunicorn.workers.ggevent.GeventWorker"
+timeout = 30
+keepalive = 2
+accesslog = "-"  # Log to stdout
+errorlog = "-"   # Log to stderr
