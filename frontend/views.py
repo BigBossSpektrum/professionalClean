@@ -41,9 +41,12 @@ def usuario(request):
 
 
 
+from django.middleware.csrf import get_token
+
 def admin_login(request):
 	# Configurar el tiempo de expiración de sesión a 10 minutos
 	request.session.set_expiry(600)
+	csrf_token = get_token(request)
 	if request.method == 'POST':
 		username = request.POST.get('username')
 		password = request.POST.get('password')
@@ -57,13 +60,13 @@ def admin_login(request):
 			return redirect('administrador')
 		else:
 			messages.error(request, 'Credenciales inválidas o usuario sin permisos de administrador.')
-	return render(request, 'frontend/admin_login.html')
+	return render(request, 'frontend/admin_login.html', {'csrf_token': csrf_token})
 
 @login_required(login_url='admin_login')
 def admin_logout(request):
 	logout(request)
 	messages.success(request, 'Sesión cerrada correctamente.')
-	return redirect('admin_login')
+	return redirect('home')
 
 @login_required(login_url='admin_login')
 def administrador(request):
