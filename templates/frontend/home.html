@@ -72,7 +72,7 @@
 <section class="landing text-center py-5">
     <h2>Bienvenido a Professional Clean</h2>
     <p>Expertos en servicios de limpieza para hogares y empresas. ¡Confía en nosotros para un ambiente impecable!</p>
-    <a href="#servicios" class="btn btn-primary">Ver Servicios</a>
+
 </section>
 
 <section id="servicios" class="py-5">
@@ -82,10 +82,10 @@
         <div class="col-md-6 col-lg-3 mb-4">
             <div class="card h-100">
                 {% if servicio.imagen %}
-                <img src="{{ servicio.imagen.url }}" class="card-img-top" alt="{{ servicio.nombre }}">
+                <img src="{{ servicio.imagen.url }}" alt="{{ servicio.nombre }}" class="card-img-top" style="width:100%; height:180px; object-fit:cover; border-top-left-radius:8px; border-top-right-radius:8px;">
                 {% endif %}
-                <div class="card-body">
-                    <h5 class="card-title">{{ servicio.nombre }}</h5>
+                <div class="card-body text-center">
+                    <h5 class="card-title mb-2">{{ servicio.nombre }}</h5>
                     <p class="card-text">{{ servicio.descripcion|truncatechars:80 }}</p>
                     <a href="{% url 'servicio_detalle' servicio.id %}" class="btn btn-outline-primary">Ver más</a>
                 </div>

@@ -4,6 +4,20 @@
 <section>
     <h2>{{ servicio.nombre }}</h2>
     <p>{{ servicio.descripcion }}</p>
+    {% if servicio.imagenes.all %}
+    <div class="my-4">
+        <h4>Galería de imágenes</h4>
+        <div class="d-flex flex-wrap gap-3">
+            {% for img in servicio.imagenes.all %}
+                <div>
+                    <img src="{{ img.imagen.url }}" alt="Imagen de {{ servicio.nombre }}" class="img-thumbnail" style="max-width: 180px; max-height: 180px;">
+                </div>
+            {% empty %}
+                <span class="text-muted">Sin imágenes asociadas</span>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
     <a href="/usuario/">Solicitar servicio</a>
 </section>
 {% endblock %}

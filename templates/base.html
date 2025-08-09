@@ -19,7 +19,10 @@
                 <a href="#servicios" class="btn btn-outline-info text-white fw-bold me-2" style="background:rgba(0,195,255,0.15); border-width:2px;">Servicios</a>
                 <a href="#contacto" class="btn btn-outline-info text-white fw-bold me-2" style="background:rgba(0,195,255,0.15); border-width:2px;">Contacto</a>
                 {% if user.is_authenticated and user.is_staff %}
-                    <a href="{% url 'admin_logout' %}" class="btn btn-danger ms-auto fw-bold" style="border-width:2px;">Cerrar sesión</a>
+                    <div class="d-flex ms-auto gap-2">
+                        <a href="{% url 'administrador' %}" class="btn btn-outline-info fw-bold" style="border-width:2px;">Panel Admin</a>
+                        <a href="{% url 'admin_logout' %}" class="btn btn-danger fw-bold" style="border-width:2px;">Cerrar sesión</a>
+                    </div>
                 {% else %}
                     <a href="{% url 'admin_login' %}" class="btn btn-outline-light ms-auto fw-bold" style="border-width:2px;">Login Admin</a>
                 {% endif %}
