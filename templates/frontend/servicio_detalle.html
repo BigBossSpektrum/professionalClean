@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}{{ servicio.nombre }} | Professional Clean{% endblock %}
+{% block content %}
+<section>
+    <h2>{{ servicio.nombre }}</h2>
+    <p>{{ servicio.descripcion }}</p>
+    <a href="/usuario/">Solicitar servicio</a>
+</section>
+{% endblock %}

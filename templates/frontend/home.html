@@ -1,0 +1,85 @@
+{% block title %}Inicio | Professional Clean{% endblock %}
+{% block content %}
+<section class="landing">
+    <h2>Bienvenido a Professional Clean</h2>
+    <p>Expertos en servicios de limpieza para hogares y empresas. ¡Confía en nosotros para un ambiente impecable!</p>
+    <a href="#servicios" class="btn">Ver Servicios</a>
+</section>
+
+<section id="servicios">
+    <h2>Nuestros Servicios</h2>
+    <div class="servicio">
+        <h3>Limpieza Residencial</h3>
+        <p>Ofrecemos limpieza profunda y regular para casas y departamentos, adaptándonos a tus necesidades.</p>
+    </div>
+    <div class="servicio">
+        <h3>Limpieza Comercial</h3>
+        <p>Soluciones de limpieza para oficinas, locales y espacios comerciales, garantizando ambientes saludables.</p>
+    </div>
+    <div class="servicio">
+        <h3>Limpieza de Final de Obra</h3>
+        <p>Deja tu espacio reluciente después de una remodelación o construcción, eliminando polvo y residuos.</p>
+    </div>
+    <div class="servicio">
+        <h3>Limpieza de Alfombras y Tapizados</h3>
+        <p>Recupera la frescura y apariencia de tus alfombras y muebles con nuestro servicio especializado.</p>
+    </div>
+</section>
+
+<section id="contacto">
+    <h2>Contacto</h2>
+    <form>
+        <input type="text" placeholder="Nombre" required>
+        <input type="email" placeholder="Email" required>
+        <textarea placeholder="Mensaje" required></textarea>
+        <button type="submit">Enviar</button>
+    </form>
+</section>
+{% endblock %}
+{% extends 'base.html' %}
+{% block title %}Inicio | Professional Clean{% endblock %}
+{% block content %}
+<section class="landing text-center py-5">
+    <h2>Bienvenido a Professional Clean</h2>
+    <p>Expertos en servicios de limpieza para hogares y empresas. ¡Confía en nosotros para un ambiente impecable!</p>
+    <a href="#servicios" class="btn btn-primary">Ver Servicios</a>
+</section>
+
+<section id="servicios" class="py-5">
+    <h2 class="mb-4">Nuestros Servicios</h2>
+    <div class="row">
+        {% for servicio in servicios %}
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card h-100">
+                {% if servicio.imagen %}
+                <img src="{{ servicio.imagen.url }}" class="card-img-top" alt="{{ servicio.nombre }}">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ servicio.nombre }}</h5>
+                    <p class="card-text">{{ servicio.descripcion|truncatechars:80 }}</p>
+                    <a href="{% url 'servicio_detalle' servicio.id %}" class="btn btn-outline-primary">Ver más</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<section id="contacto" class="py-5">
+    <h2>Contacto</h2>
+    <form class="row g-3">
+        <div class="col-md-6">
+            <input type="text" class="form-control" placeholder="Nombre" required>
+        </div>
+        <div class="col-md-6">
+            <input type="email" class="form-control" placeholder="Email" required>
+        </div>
+        <div class="col-12">
+            <textarea class="form-control" placeholder="Mensaje" required></textarea>
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-success">Enviar</button>
+        </div>
+    </form>
+</section>
+{% endblock %}

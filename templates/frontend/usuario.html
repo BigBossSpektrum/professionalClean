@@ -1,0 +1,48 @@
+{% block title %}Usuario | Professional Clean{% endblock %}
+{% block content %}
+<section>
+    <h2>Zona de Usuario</h2>
+    <form>
+        <input type="text" placeholder="Nombre" required>
+        <input type="email" placeholder="Email" required>
+        <select name="servicio">
+            <option value="1">Limpieza Residencial</option>
+            <option value="2">Limpieza Comercial</option>
+            <option value="3">Limpieza de Final de Obra</option>
+            <option value="4">Limpieza de Alfombras y Tapizados</option>
+        </select>
+        <textarea placeholder="Detalles adicionales"></textarea>
+        <button type="submit">Solicitar</button>
+    </form>
+</section>
+{% endblock %}
+{% extends 'base.html' %}
+{% block title %}Usuario | Professional Clean{% endblock %}
+{% block content %}
+<section class="py-5">
+    <h2>Zona de Usuario</h2>
+    <form method="post" class="row g-3">
+        {% csrf_token %}
+        <div class="col-md-6">
+            <input type="text" name="nombre" class="form-control" placeholder="Nombre" required>
+        </div>
+        <div class="col-md-6">
+            <input type="email" name="email" class="form-control" placeholder="Email" required>
+        </div>
+        <div class="col-12">
+            <select name="servicio" class="form-select" required>
+                <option value="">Selecciona un servicio</option>
+                {% for servicio in servicios %}
+                <option value="{{ servicio.id }}">{{ servicio.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-12">
+            <textarea name="detalles" class="form-control" placeholder="Detalles adicionales"></textarea>
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Solicitar</button>
+        </div>
+    </form>
+</section>
+{% endblock %}
