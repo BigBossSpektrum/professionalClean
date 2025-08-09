@@ -1,7 +1,9 @@
-
-
-# Configuración segura de correo para producción
 import os
+# Configuración de base de datos PostgreSQL para Render
+import dj_database_url
+DATABASES = {
+    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
+}
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
 EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
