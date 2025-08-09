@@ -97,11 +97,11 @@
 
 <section id="contacto" class="py-5" style="background: #181f2a; border-radius: 18px; box-shadow: 0 4px 24px #00c3ff44; margin-bottom: 32px; border: 2px solid #00c3ff;">
     <h2 class="text-info fw-bold mb-4 text-uppercase text-center" style="text-shadow: 0 2px 8px #00c3ff, 0 0 2px #fff; letter-spacing:2px; font-size:2.2rem;">Contáctanos</h2>
-    <div class="row justify-content-center mb-4 px-3" style="gap:24px;">
+    <div class="d-flex justify-content-center gap-4 mb-4 flex-wrap">
         <div class="col-12 col-md-4 mb-3 d-flex align-items-stretch">
             <div class="card shadow w-100 text-center">
                 <div class="card-body">
-                    <img src="{% static 'images/whatsapp.png' %}" alt="WhatsApp" style="width:48px; height:48px; margin-bottom:10px;">
+                    <img src="{% static 'images/whatsapp.png' %}" alt="WhatsApp" style="width:28px; height:28px; margin-bottom:10px;">
                     <h5 class="card-title">WhatsApp</h5>
                     <p class="card-text">Contáctanos directamente por WhatsApp para atención rápida y personalizada.</p>
                     <a href="tel:+573142729812" target="_blank" class="btn btn-success">Enviar mensaje</a>
@@ -111,7 +111,7 @@
         <div class="col-12 col-md-4 mb-3 d-flex align-items-stretch">
             <div class="card shadow w-100 text-center">
                 <div class="card-body">
-                    <img src="{% static 'images/facebook.png' %}" alt="Facebook" style="width:48px; height:48px; margin-bottom:10px;">
+                    <img src="{% static 'images/facebook.png' %}" alt="Facebook" style="width:28px; height:28px; margin-bottom:10px;">
                     <h5 class="card-title">Facebook</h5>
                     <p class="card-text">Síguenos y escríbenos en nuestra página de Facebook para novedades y soporte.</p>
                     <a href="https://www.facebook.com/profesionalcleean" target="_blank" class="btn btn-primary">Ir a Facebook</a>
@@ -121,7 +121,7 @@
         <div class="col-12 col-md-4 mb-3 d-flex align-items-stretch">
             <div class="card shadow w-100 text-center">
                 <div class="card-body">
-                    <img src="{% static 'images/instagram.png' %}" alt="Instagram" style="width:48px; height:48px; margin-bottom:10px;">
+                    <img src="{% static 'images/instagram.png' %}" alt="Instagram" style="width:28px; height:28px; margin-bottom:10px;">
                     <h5 class="card-title">Instagram</h5>
                     <p class="card-text">Mira nuestro trabajo y contáctanos por Instagram para cotizaciones y consultas.</p>
                     <a href="https://instagram.com/profesionalClean" target="_blank" class="btn btn-info text-white">Ir a Instagram</a>
@@ -129,23 +129,23 @@
             </div>
         </div>
     </div>
-    <h3 class="mb-3">Tu opinion es importante para nosotros
-    </h3>
-    <span class="text-muted">Ayúdanos a mejorar nuestros servicios.</span>
-
-    <form class="row g-3 px-3 py-4" style="background:#222; border-radius:12px; box-shadow:0 2px 8px #00c3ff44; margin-top:24px;">
-        <div class="col-md-6">
-            <input type="text" class="form-control" placeholder="Nombre" required>
-        </div>
-        <div class="col-md-6">
-            <input type="email" class="form-control" placeholder="Email" required>
-        </div>
-        <div class="col-12">
-            <textarea class="form-control" placeholder="Mensaje" required></textarea>
-        </div>
-        <div class="col-12">
-            <button type="submit" class="btn btn-success">Enviar</button>
-        </div>
-    </form>
+    <div class="mb-4 mx-auto" style="max-width:1000px; background:#222; border-radius:18px; box-shadow:0 2px 16px #00c3ff88; border:2px solid #00c3ff; padding:32px 24px;">
+        <h3 class="mb-2 text-info fw-bold text-center text-uppercase" style="font-size:1.7rem; text-shadow:0 2px 8px #00c3ff, 0 0 2px #fff; letter-spacing:1px;">Tu opinión es importante</h3>
+        <span class="d-block mb-3 text-white text-center" style="font-size:1.1rem;">Ayúdanos a mejorar nuestros servicios.</span>
+        <form class="row g-3">
+            <div class="col-md-6">
+                <input type="text" class="form-control" placeholder="Nombre" required>
+            </div>
+            <div class="col-md-6">
+                <input type="email" class="form-control" placeholder="Email" required>
+            </div>
+            <div class="col-12">
+                <textarea class="form-control" placeholder="Mensaje" required></textarea>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-success">Enviar</button>
+            </div>
+        </form>
+    </div>
 </section>
 {% endblock %}
