@@ -8,4 +8,7 @@ urlpatterns = [
     path('admin-servicio/', views.administrador, name='administrador'),
     path('admin-login/', views.admin_login, name='admin_login'),
     path('admin-logout/', views.admin_logout, name='admin_logout'),
+    path('admin-servicio/editar/<int:servicio_id>/', views.editar_servicio, name='editar_servicio'),
+    path('admin-servicio/eliminar/<int:servicio_id>/', views.eliminar_servicio, name='eliminar_servicio'),
+    path('admin-servicio/eliminar-imagen/<int:imagen_id>/', views.eliminar_imagen, name='eliminar_imagen'),
 ]

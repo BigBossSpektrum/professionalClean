@@ -13,11 +13,38 @@
             <textarea name="descripcion" class="form-control" placeholder="Descripción del servicio" required></textarea>
         </div>
         <div class="col-12">
-            <input type="file" name="imagen" class="form-control" accept="image/*" required>
+            <input type="file" name="imagenes" class="form-control" accept="image/*" multiple required>
+            <small class="text-muted">Puedes seleccionar varias imágenes.</small>
         </div>
         <div class="col-12">
             <button type="submit" class="btn btn-success">Cargar Servicio</button>
         </div>
     </form>
+
+    <hr class="my-5">
+    <h3>Servicios existentes</h3>
+    <div class="row">
+        {% for servicio in servicios %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">{{ servicio.nombre }}</h5>
+                    <p class="card-text">{{ servicio.descripcion }}</p>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex flex-wrap gap-2 mb-2">
+                        {% for img in servicio.imagenes.all %}
+                            <img src="{{ img.imagen.url }}" alt="Imagen de {{ servicio.nombre }}" class="img-thumbnail" style="max-width: 100px; max-height: 100px;">
+                        {% empty %}
+                            <span class="text-muted">Sin imágenes</span>
+                        {% endfor %}
+                    </div>
+                    <a href="{% url 'editar_servicio' servicio.id %}" class="btn btn-sm btn-primary me-2">Editar</a>
+                    <a href="{% url 'eliminar_servicio' servicio.id %}" class="btn btn-sm btn-danger">Eliminar</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 </section>
 {% endblock %}

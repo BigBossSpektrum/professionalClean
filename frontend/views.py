@@ -1,5 +1,40 @@
+from django.contrib.auth.decorators import login_required
+
+@login_required(login_url='admin_login')
+def editar_servicio(request, servicio_id):
+	servicio = get_object_or_404(Servicio, pk=servicio_id)
+	if not request.user.is_staff:
+		return redirect('admin_login')
+	if request.method == 'POST':
+		servicio.nombre = request.POST.get('nombre')
+		servicio.descripcion = request.POST.get('descripcion')
+		servicio.save()
+		nuevas_imagenes = request.FILES.getlist('imagenes')
+		for img in nuevas_imagenes:
+			ServicioImagen.objects.create(servicio=servicio, imagen=img)
+		return redirect('administrador')
+	return render(request, 'frontend/editar_servicio.html', {'servicio': servicio})
+
+@login_required(login_url='admin_login')
+def eliminar_servicio(request, servicio_id):
+	servicio = get_object_or_404(Servicio, pk=servicio_id)
+	if not request.user.is_staff:
+		return redirect('admin_login')
+	if request.method == 'POST':
+		servicio.delete()
+		return redirect('administrador')
+	return render(request, 'frontend/eliminar_servicio.html', {'servicio': servicio})
+
+@login_required(login_url='admin_login')
+def eliminar_imagen(request, imagen_id):
+	imagen = get_object_or_404(ServicioImagen, pk=imagen_id)
+	if not request.user.is_staff:
+		return redirect('admin_login')
+	servicio_id = imagen.servicio.id
+	imagen.delete()
+	return redirect('editar_servicio', servicio_id=servicio_id)
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Servicio, Solicitud, Usuario
+from .models import Servicio, Solicitud, Usuario, ServicioImagen
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -75,7 +110,10 @@ def administrador(request):
 	if request.method == 'POST':
 		nombre = request.POST.get('nombre')
 		descripcion = request.POST.get('descripcion')
-		imagen = request.FILES.get('imagen')
-		Servicio.objects.create(nombre=nombre, descripcion=descripcion, imagen=imagen)
+		imagenes = request.FILES.getlist('imagenes')
+		servicio = Servicio.objects.create(nombre=nombre, descripcion=descripcion)
+		for img in imagenes:
+			ServicioImagen.objects.create(servicio=servicio, imagen=img)
 		return redirect('home')
-	return render(request, 'frontend/administrador.html')
+	servicios = Servicio.objects.all()
+	return render(request, 'frontend/administrador.html', {'servicios': servicios})

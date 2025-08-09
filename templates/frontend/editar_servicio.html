@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Editar Servicio | Professional Clean{% endblock %}
+{% block content %}
+<section class="py-5">
+    <h2>Editar Servicio</h2>
+    <form method="post" enctype="multipart/form-data" class="row g-3">
+        {% csrf_token %}
+        <div class="col-12">
+            <input type="text" name="nombre" class="form-control" value="{{ servicio.nombre }}" required>
+        </div>
+        <div class="col-12">
+            <textarea name="descripcion" class="form-control" required>{{ servicio.descripcion }}</textarea>
+        </div>
+        <div class="col-12">
+            <input type="file" name="imagenes" class="form-control" accept="image/*" multiple>
+            <small class="text-muted">Puedes agregar más imágenes.</small>
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Guardar cambios</button>
+            <a href="{% url 'administrador' %}" class="btn btn-secondary ms-2">Cancelar</a>
+        </div>
+    </form>
+    <hr class="my-4">
+    <h4>Imágenes actuales</h4>
+    <div class="d-flex flex-wrap gap-2">
+        {% for img in servicio.imagenes.all %}
+            <div class="position-relative">
+                <img src="{{ img.imagen.url }}" alt="Imagen" class="img-thumbnail" style="max-width: 100px; max-height: 100px;">
+                <a href="{% url 'eliminar_imagen' img.id %}" class="btn btn-sm btn-danger position-absolute top-0 end-0">Eliminar</a>
+            </div>
+        {% empty %}
+            <span class="text-muted">Sin imágenes</span>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
