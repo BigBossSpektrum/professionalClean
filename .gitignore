@@ -1,0 +1,28 @@
+# Ignorar entornos virtuales
+.venv/
+venv/
+
+# Ignorar archivos de base de datos locales
+*.sqlite3
+
+# Ignorar archivos de configuración y credenciales
+.env
+*.env
+
+# Ignorar archivos de caché y compilados
+__pycache__/
+*.pyc
+
+# Ignorar archivos de medios y estáticos generados
+/media/
+/static/
+
+# Ignorar archivos de logs
+*.log
+
+# Ignorar archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Ignorar archivos de VS Code
+.vscode/
