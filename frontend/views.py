@@ -33,6 +33,43 @@ def editar_servicio(request, servicio_id):
 		return redirect('administrador')
 	return render(request, 'frontend/editar_servicio.html', {'servicio': servicio})
 
+# Vista para subir imágenes y videos por el admin
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Servicio, ServicioImagen
+from django.contrib import messages
+
+@login_required(login_url='admin_login')
+def subir_archivos_servicio(request, servicio_id):
+	servicio = get_object_or_404(Servicio, pk=servicio_id)
+	if not request.user.is_staff:
+		return redirect('admin_login')
+	if request.method == 'POST':
+		imagenes = request.FILES.getlist('imagenes')
+		videos = request.FILES.getlist('videos')
+		archivos_guardados = 0
+		errores = []
+		# Guardar imágenes
+		for img in imagenes:
+			if img.content_type.startswith('image/'):
+				ServicioImagen.objects.create(servicio=servicio, imagen=img)
+				archivos_guardados += 1
+			else:
+				errores.append(f"Archivo '{img.name}' no es una imagen válida.")
+		# Guardar videos
+		for vid in videos:
+			if vid.content_type.startswith('video/'):
+				ServicioImagen.objects.create(servicio=servicio, video=vid)
+				archivos_guardados += 1
+			else:
+				errores.append(f"Archivo '{vid.name}' no es un video válido.")
+		if archivos_guardados > 0:
+			messages.success(request, f"{archivos_guardados} archivo(s) subido(s) correctamente.")
+		if errores:
+			for error in errores:
+				messages.error(request, error)
+		return redirect('administrador')
+	return redirect('administrador')
+
 @login_required(login_url='admin_login')
 def eliminar_servicio(request, servicio_id):
 	servicio = get_object_or_404(Servicio, pk=servicio_id)
@@ -129,9 +166,39 @@ def administrador(request):
 		nombre = request.POST.get('nombre')
 		descripcion = request.POST.get('descripcion')
 		imagenes = request.FILES.getlist('imagenes')
+		videos = request.FILES.getlist('videos')
+		
 		servicio = Servicio.objects.create(nombre=nombre, descripcion=descripcion)
+		archivos_guardados = 0
+		errores = []
+		
+		# Procesar imágenes
 		for img in imagenes:
-			ServicioImagen.objects.create(servicio=servicio, imagen=img)
-		return redirect('home')
+			if img and hasattr(img, 'name') and img.size > 0:
+				if img.content_type.startswith('image/'):
+					ServicioImagen.objects.create(servicio=servicio, imagen=img)
+					archivos_guardados += 1
+				else:
+					errores.append(f"'{img.name}' no es una imagen válida.")
+		
+		# Procesar videos
+		for vid in videos:
+			if vid and hasattr(vid, 'name') and vid.size > 0:
+				if vid.content_type.startswith('video/'):
+					ServicioImagen.objects.create(servicio=servicio, video=vid)
+					archivos_guardados += 1
+				else:
+					errores.append(f"'{vid.name}' no es un video válido.")
+		
+		if archivos_guardados > 0:
+			messages.success(request, f"Servicio '{nombre}' creado con {archivos_guardados} archivo(s).")
+		if errores:
+			for error in errores:
+				messages.error(request, error)
+		
+		# Limpieza: eliminar registros huérfanos
+		ServicioImagen.objects.filter(imagen='', video='').delete()
+		return redirect('administrador')
+	
 	servicios = Servicio.objects.all()
 	return render(request, 'frontend/administrador.html', {'servicios': servicios})

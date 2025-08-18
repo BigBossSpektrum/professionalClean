@@ -2,8 +2,7 @@
 {% block title %}Administrador | Professional Clean{% endblock %}
 {% block content %}
 <section class="py-5">
-    <h2>Zona de Administrador</h2>
-    <a href="{% url 'admin_logout' %}" class="btn btn-danger mb-4">Cerrar sesión</a>
+    <h2 class="text-white">Zona de Administrador</h2>
     <form method="post" enctype="multipart/form-data" class="row g-3">
         {% csrf_token %}
         <div class="col-12">
@@ -13,8 +12,14 @@
             <textarea name="descripcion" class="form-control" placeholder="Descripción del servicio" required></textarea>
         </div>
         <div class="col-12">
-            <input type="file" name="imagenes" class="form-control" accept="image/*" multiple required>
-            <small class="text-muted">Puedes seleccionar varias imágenes.</small>
+            <label class="form-label text-white">Imágenes del servicio:</label>
+            <input type="file" name="imagenes" class="form-control" accept="image/*" multiple>
+            <small class="text-white">Puedes seleccionar varias imágenes (JPG, PNG, GIF).</small>
+        </div>
+        <div class="col-12">
+            <label class="form-label text-white">Videos del servicio:</label>
+            <input type="file" name="videos" class="form-control" accept="video/*" multiple>
+            <small class="text-white">Puedes seleccionar varios videos (MP4, AVI, MOV).</small>
         </div>
         <div class="col-12">
             <button type="submit" class="btn btn-success">Cargar Servicio</button>
@@ -22,7 +27,7 @@
     </form>
 
     <hr class="my-5">
-    <h3>Servicios existentes</h3>
+    <h3 class="mt-4 text-white">Servicios existentes</h3>
     <div class="row">
         {% for servicio in servicios %}
         <div class="col-md-6 col-lg-4 mb-4">
@@ -32,12 +37,79 @@
                     <p class="card-text">{{ servicio.descripcion }}</p>
                 </div>
                 <div class="card-footer">
-                    <div class="d-flex flex-wrap gap-2 mb-2">
-                        {% for img in servicio.imagenes.all %}
-                            <img src="{{ img.imagen.url }}" alt="Imagen de {{ servicio.nombre }}" class="img-thumbnail" style="max-width: 100px; max-height: 100px;">
-                        {% empty %}
-                            <span class="text-muted">Sin imágenes</span>
-                        {% endfor %}
+                    <!-- Galería de archivos existentes -->
+                    {% if servicio.imagenes.all %}
+                    <div class="admin-gallery mb-3" style="position: relative; background: #2a2a2a; padding: 15px; border-radius: 8px; border: 1px solid #00c3ff;">
+                        <h6 class="text-info mb-2">Archivos multimedia ({{ servicio.imagenes.count }})</h6>
+                        <div class="admin-gallery-scroll" id="admin-gallery-{{ servicio.id }}" style="display: flex; gap: 10px; overflow-x: auto; scroll-behavior: smooth; padding: 5px 0; scrollbar-width: none; -ms-overflow-style: none;">
+                            {% for archivo in servicio.imagenes.all %}
+                                {% if archivo.get_file_type == 'image' %}
+                                    <div class="admin-gallery-item" style="flex: 0 0 auto; position: relative; border-radius: 6px; overflow: hidden; border: 2px solid #00c3ff;">
+                                        <img src="{{ archivo.get_imagen_url }}" 
+                                             alt="Imagen de {{ servicio.nombre }}" 
+                                             style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;"
+                                             onclick="openLightbox('{{ archivo.get_imagen_url }}', 'image', '{{ servicio.nombre }}')">
+                                        <span class="badge bg-primary position-absolute top-0 end-0 m-1" style="font-size: 8px;">IMG</span>
+                                    </div>
+                                {% elif archivo.get_file_type == 'video' %}
+                                    <div class="admin-gallery-item" style="flex: 0 0 auto; position: relative; border-radius: 6px; overflow: hidden; border: 2px solid #00c3ff;">
+                                        <video style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;"
+                                               onclick="openLightbox('{{ archivo.get_video_url }}', 'video', '{{ servicio.nombre }}')">
+                                            <source src="{{ archivo.get_video_url }}" type="video/mp4">
+                                        </video>
+                                        <span class="badge bg-success position-absolute top-0 end-0 m-1" style="font-size: 8px;">VID</span>
+                                        <div class="admin-play-button" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,195,255,0.8); border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;">
+                                            <i class="fas fa-play" style="color: white; font-size: 8px; margin-left: 1px;"></i>
+                                        </div>
+                                    </div>
+                                {% elif archivo.get_file_type == 'both' %}
+                                    <div class="admin-gallery-item" style="flex: 0 0 auto; position: relative; border-radius: 6px; overflow: hidden; border: 2px solid #00c3ff;">
+                                        <img src="{{ archivo.get_imagen_url }}" 
+                                             alt="Imagen de {{ servicio.nombre }}" 
+                                             style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;"
+                                             onclick="openLightbox('{{ archivo.get_imagen_url }}', 'image', '{{ servicio.nombre }}')">
+                                        <span class="badge bg-warning position-absolute top-0 end-0 m-1" style="font-size: 8px;">IMG</span>
+                                    </div>
+                                    <div class="admin-gallery-item" style="flex: 0 0 auto; position: relative; border-radius: 6px; overflow: hidden; border: 2px solid #00c3ff;">
+                                        <video style="width: 80px; height: 80px; object-fit: cover; cursor: pointer;"
+                                               onclick="openLightbox('{{ archivo.get_video_url }}', 'video', '{{ servicio.nombre }}')">
+                                            <source src="{{ archivo.get_video_url }}" type="video/mp4">
+                                        </video>
+                                        <span class="badge bg-warning position-absolute top-0 end-0 m-1" style="font-size: 8px;">VID</span>
+                                        <div class="admin-play-button" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,195,255,0.8); border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;">
+                                            <i class="fas fa-play" style="color: white; font-size: 8px; margin-left: 1px;"></i>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        
+                        <!-- Controles de navegación para admin -->
+                        {% if servicio.imagenes.count > 4 %}
+                        <button class="admin-gallery-nav admin-gallery-prev" onclick="scrollGallery('admin-gallery-{{ servicio.id }}', -160)" 
+                                style="position: absolute; left: 5px; top: 50%; transform: translateY(-50%); background: rgba(0,195,255,0.8); border: none; border-radius: 50%; width: 25px; height: 25px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-chevron-left" style="font-size: 10px;"></i>
+                        </button>
+                        <button class="admin-gallery-nav admin-gallery-next" onclick="scrollGallery('admin-gallery-{{ servicio.id }}', 160)" 
+                                style="position: absolute; right: 5px; top: 50%; transform: translateY(-50%); background: rgba(0,195,255,0.8); border: none; border-radius: 50%; width: 25px; height: 25px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-chevron-right" style="font-size: 10px;"></i>
+                        </button>
+                        {% endif %}
+                    </div>
+                    {% else %}
+                        <div class="text-muted mb-3">Sin archivos multimedia</div>
+                    {% endif %}
+                        <!-- Formulario para subir imágenes y videos -->
+                        <form method="post" action="{% url 'subir_archivos_servicio' servicio.id %}" enctype="multipart/form-data" class="mt-2">
+                            {% csrf_token %}
+                            <div class="mb-2">
+                                <input type="file" name="imagenes" accept="image/*" multiple class="form-control" placeholder="Subir imágenes">
+                            </div>
+                            <div class="mb-2">
+                                <input type="file" name="videos" accept="video/*" multiple class="form-control" placeholder="Subir videos">
+                            </div>
+                            <button type="submit" class="btn btn-sm btn-success">Subir archivos</button>
+                        </form>
                     </div>
                     <a href="{% url 'editar_servicio' servicio.id %}" class="btn btn-sm btn-primary me-2">Editar</a>
                     <a href="{% url 'eliminar_servicio' servicio.id %}" class="btn btn-sm btn-danger">Eliminar</a>
@@ -47,4 +119,137 @@
         {% endfor %}
     </div>
 </section>
+{% endblock %}
+{% block scripts %}
+
+<!-- Lightbox Modal -->
+<div class="modal fade" id="lightboxModal" tabindex="-1" aria-labelledby="lightboxModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content" style="background: #1a1a1a; border: 2px solid #00c3ff;">
+            <div class="modal-header border-bottom border-secondary">
+                <h5 class="modal-title text-white" id="lightboxModalLabel">Vista ampliada</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center p-0">
+                <div id="lightboxContent"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Función para abrir el lightbox
+function openLightbox(url, type, title) {
+    const modal = new bootstrap.Modal(document.getElementById('lightboxModal'));
+    const content = document.getElementById('lightboxContent');
+    const modalTitle = document.getElementById('lightboxModalLabel');
+    
+    modalTitle.textContent = title;
+    
+    if (type === 'image') {
+        content.innerHTML = `<img src="${url}" alt="${title}" style="max-width: 100%; max-height: 80vh; object-fit: contain;">`;
+    } else if (type === 'video') {
+        content.innerHTML = `
+            <video controls autoplay style="max-width: 100%; max-height: 80vh;">
+                <source src="${url}" type="video/mp4">
+                Tu navegador no soporta el elemento de video.
+            </video>
+        `;
+    }
+    
+    modal.show();
+}
+
+// Función para desplazar la galería
+function scrollGallery(galleryId, direction) {
+    const gallery = document.getElementById(galleryId);
+    gallery.scrollBy({
+        left: direction,
+        behavior: 'smooth'
+    });
+}
+
+// Auto-scroll para galerías de administrador
+function startAdminAutoScroll(galleryId, speed = 1) {
+    const gallery = document.getElementById(galleryId);
+    if (!gallery) return;
+    
+    let scrollDirection = 1;
+    let isPaused = false;
+    
+    const autoScroll = () => {
+        if (isPaused) return;
+        
+        const maxScroll = gallery.scrollWidth - gallery.clientWidth;
+        const currentScroll = gallery.scrollLeft;
+        
+        if (currentScroll >= maxScroll && scrollDirection === 1) {
+            scrollDirection = -1;
+        } else if (currentScroll <= 0 && scrollDirection === -1) {
+            scrollDirection = 1;
+        }
+        
+        gallery.scrollBy({
+            left: speed * scrollDirection,
+            behavior: 'smooth'
+        });
+    };
+    
+    gallery.addEventListener('mouseenter', () => { isPaused = true; });
+    gallery.addEventListener('mouseleave', () => { isPaused = false; });
+    
+    setInterval(autoScroll, 100);
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Iniciar auto-scroll para galerías de admin
+    const adminGalleries = document.querySelectorAll('[id^="admin-gallery-"]');
+    adminGalleries.forEach(gallery => {
+        startAdminAutoScroll(gallery.id, 1);
+    });
+    
+    // Efectos hover para elementos de galería
+    const galleryItems = document.querySelectorAll('.admin-gallery-item');
+    galleryItems.forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.1)';
+            this.style.boxShadow = '0 4px 15px rgba(0,195,255,0.5)';
+        });
+        
+        item.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1)';
+            this.style.boxShadow = 'none';
+        });
+    });
+    
+    // Ocultar barras de desplazamiento
+    const style = document.createElement('style');
+    style.textContent = `
+        .admin-gallery-scroll::-webkit-scrollbar {
+            display: none;
+        }
+        .admin-gallery-scroll {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    `;
+    document.head.appendChild(style);
+});
+</script>
+
+<script>
+    // Script para manejar la subida de archivos
+    document.querySelectorAll('form[action*="subir_archivos_servicio"]').forEach(form => {
+        form.addEventListener('submit', function(event) {
+            const imagenes = form.querySelector('input[name="imagenes"]');
+            const videos = form.querySelector('input[name="videos"]');
+            
+            // Validar que al menos se seleccione una imagen o un video
+            if ((!imagenes.files.length && !videos.files.length)) {
+                event.preventDefault();
+                alert('Por favor, selecciona al menos una imagen o un video para subir.');
+            }
+        });
+    });
+</script>
 {% endblock %}

@@ -36,7 +36,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-fl*eo0zj*$wht+uqq-=qzz64u5d@d0!w%1uy%qo2xs)=%tjwcb'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 ALLOWED_HOSTS = ['.onrender.com', 'localhost', '127.0.0.1']
 # Static files (CSS, JavaScript, Images)
 # WhiteNoise para servir archivos estáticos en producción
@@ -169,7 +169,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 # Si tienes archivos estáticos personalizados, descomenta la siguiente línea:
-# STATICFILES_DIRS = [BASE_DIR / 'static']
+STATICFILES_DIRS = [BASE_DIR / 'static']
 # WhiteNoise settings para optimización
 WHITENOISE_USE_FINDERS = True
 WHITENOISE_AUTOREFRESH = True

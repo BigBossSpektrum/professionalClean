@@ -21,16 +21,39 @@
         </div>
     </form>
     <hr class="my-4">
-    <h4>Imágenes actuales</h4>
+    <h4>Archivos multimedia actuales</h4>
     <div class="d-flex flex-wrap gap-2">
-        {% for img in servicio.imagenes.all %}
-            <div class="position-relative">
-                <img src="{{ img.imagen.url }}" alt="Imagen" class="img-thumbnail" style="max-width: 100px; max-height: 100px;">
-                <a href="{% url 'eliminar_imagen' img.id %}" class="btn btn-sm btn-danger position-absolute top-0 end-0">Eliminar</a>
-            </div>
+        {% for archivo in servicio.imagenes.all|slice:":4" %}
+            {% if archivo.get_file_type == 'image' %}
+                <div class="position-relative">
+                    <img src="{{ archivo.get_imagen_url }}" alt="Imagen" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;">
+                    <a href="{% url 'eliminar_imagen' archivo.id %}" class="btn btn-sm btn-danger position-absolute top-0 end-0">×</a>
+                    <span class="badge bg-primary position-absolute bottom-0 start-0">IMG</span>
+                </div>
+            {% elif archivo.get_file_type == 'video' %}
+                <div class="position-relative">
+                    <video controls style="width: 100px; height: 100px; object-fit: cover;">
+                        <source src="{{ archivo.get_video_url }}" type="video/mp4">
+                        Tu navegador no soporta el elemento de video.
+                    </video>
+                    <a href="{% url 'eliminar_imagen' archivo.id %}" class="btn btn-sm btn-danger position-absolute top-0 end-0">×</a>
+                    <span class="badge bg-success position-absolute bottom-0 start-0">VID</span>
+                </div>
+            {% elif archivo.get_file_type == 'both' %}
+                <div class="position-relative">
+                    <img src="{{ archivo.get_imagen_url }}" alt="Imagen" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;">
+                    <a href="{% url 'eliminar_imagen' archivo.id %}" class="btn btn-sm btn-danger position-absolute top-0 end-0">×</a>
+                    <span class="badge bg-warning position-absolute bottom-0 start-0">IMG+VID</span>
+                </div>
+            {% endif %}
         {% empty %}
-            <span class="text-muted">Sin imágenes</span>
+            <span class="text-muted">Sin archivos multimedia</span>
         {% endfor %}
+        {% if servicio.imagenes.count > 4 %}
+            <div class="d-flex align-items-center justify-content-center bg-light text-dark rounded" style="min-width: 100px; min-height: 100px;">
+                <span class="fw-bold">+{{ servicio.imagenes.count|add:"-4" }} más</span>
+            </div>
+        {% endif %}
     </div>
 </section>
 {% endblock %}

@@ -6,18 +6,244 @@
     <p>{{ servicio.descripcion }}</p>
     {% if servicio.imagenes.all %}
     <div class="my-4">
-        <h4>Galería de imágenes</h4>
-        <div class="d-flex flex-wrap gap-3">
-            {% for img in servicio.imagenes.all %}
-                <div>
-                    <img src="{{ img.imagen.url }}" alt="Imagen de {{ servicio.nombre }}" class="img-thumbnail" style="max-width: 180px; max-height: 180px;">
-                </div>
-            {% empty %}
-                <span class="text-muted">Sin imágenes asociadas</span>
-            {% endfor %}
+        <h4>Galería multimedia</h4>
+        <div class="gallery-container" style="position: relative; overflow: hidden; border-radius: 12px; background: #1a1a1a; padding: 20px;">
+            <div class="gallery-scroll" id="gallery-{{ servicio.id }}" style="display: flex; gap: 15px; overflow-x: auto; scroll-behavior: smooth; padding: 10px 0; scrollbar-width: none; -ms-overflow-style: none;">
+                {% for archivo in servicio.imagenes.all %}
+                    {% if archivo.get_file_type == 'image' %}
+                        <div class="gallery-item" style="flex: 0 0 auto; position: relative; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,195,255,0.3); transition: transform 0.3s ease, box-shadow 0.3s ease;">
+                            <img src="{{ archivo.get_imagen_url }}" 
+                                 alt="Imagen de {{ servicio.nombre }}" 
+                                 style="width: 250px; height: 200px; object-fit: cover; cursor: pointer;"
+                                 onclick="openLightbox('{{ archivo.get_imagen_url }}', 'image', '{{ servicio.nombre }}')">
+                            <span class="badge bg-primary position-absolute top-0 end-0 m-2">Imagen</span>
+                        </div>
+                    {% elif archivo.get_file_type == 'video' %}
+                        <div class="gallery-item" style="flex: 0 0 auto; position: relative; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,195,255,0.3); transition: transform 0.3s ease, box-shadow 0.3s ease;">
+                            <video style="width: 250px; height: 200px; object-fit: cover; cursor: pointer;"
+                                   onclick="openLightbox('{{ archivo.get_video_url }}', 'video', '{{ servicio.nombre }}')">
+                                <source src="{{ archivo.get_video_url }}" type="video/mp4">
+                                Tu navegador no soporta el elemento de video.
+                            </video>
+                            <span class="badge bg-success position-absolute top-0 end-0 m-2">Video</span>
+                            <div class="play-button" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,195,255,0.8); border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                <i class="fas fa-play" style="color: white; margin-left: 3px;"></i>
+                            </div>
+                        </div>
+                    {% elif archivo.get_file_type == 'both' %}
+                        <div class="gallery-item" style="flex: 0 0 auto; position: relative; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,195,255,0.3); transition: transform 0.3s ease, box-shadow 0.3s ease;">
+                            <img src="{{ archivo.get_imagen_url }}" 
+                                 alt="Imagen de {{ servicio.nombre }}" 
+                                 style="width: 250px; height: 200px; object-fit: cover; cursor: pointer;"
+                                 onclick="openLightbox('{{ archivo.get_imagen_url }}', 'image', '{{ servicio.nombre }}')">
+                            <span class="badge bg-warning position-absolute top-0 end-0 m-2">Imagen</span>
+                        </div>
+                        <div class="gallery-item" style="flex: 0 0 auto; position: relative; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,195,255,0.3); transition: transform 0.3s ease, box-shadow 0.3s ease;">
+                            <video style="width: 250px; height: 200px; object-fit: cover; cursor: pointer;"
+                                   onclick="openLightbox('{{ archivo.get_video_url }}', 'video', '{{ servicio.nombre }}')">
+                                <source src="{{ archivo.get_video_url }}" type="video/mp4">
+                                Tu navegador no soporta el elemento de video.
+                            </video>
+                            <span class="badge bg-warning position-absolute top-0 end-0 m-2">Video</span>
+                            <div class="play-button" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,195,255,0.8); border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                <i class="fas fa-play" style="color: white; margin-left: 3px;"></i>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% empty %}
+                    <span class="text-muted">Sin archivos multimedia asociados</span>
+                {% endfor %}
+            </div>
+            
+            <!-- Controles de navegación -->
+            <button class="gallery-nav gallery-prev" onclick="scrollGallery('gallery-{{ servicio.id }}', -300)" 
+                    style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); background: rgba(0,195,255,0.8); border: none; border-radius: 50%; width: 40px; height: 40px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10;">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="gallery-nav gallery-next" onclick="scrollGallery('gallery-{{ servicio.id }}', 300)" 
+                    style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: rgba(0,195,255,0.8); border: none; border-radius: 50%; width: 40px; height: 40px; color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10;">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+        
+        <!-- Indicador de progreso -->
+        <div class="gallery-progress" style="width: 100%; height: 4px; background: #333; border-radius: 2px; margin-top: 10px; overflow: hidden;">
+            <div id="progress-{{ servicio.id }}" style="height: 100%; background: linear-gradient(90deg, #00c3ff, #0080ff); width: 0%; transition: width 0.3s ease; border-radius: 2px;"></div>
         </div>
     </div>
     {% endif %}
     <a href="/usuario/">Solicitar servicio</a>
 </section>
+
+<!-- Lightbox Modal -->
+<div class="modal fade" id="lightboxModal" tabindex="-1" aria-labelledby="lightboxModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content" style="background: #1a1a1a; border: 2px solid #00c3ff;">
+            <div class="modal-header border-bottom border-secondary">
+                <h5 class="modal-title text-white" id="lightboxModalLabel">Vista ampliada</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center p-0">
+                <div id="lightboxContent"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Función para abrir el lightbox
+function openLightbox(url, type, title) {
+    const modal = new bootstrap.Modal(document.getElementById('lightboxModal'));
+    const content = document.getElementById('lightboxContent');
+    const modalTitle = document.getElementById('lightboxModalLabel');
+    
+    modalTitle.textContent = title;
+    
+    if (type === 'image') {
+        content.innerHTML = `<img src="${url}" alt="${title}" style="max-width: 100%; max-height: 80vh; object-fit: contain;">`;
+    } else if (type === 'video') {
+        content.innerHTML = `
+            <video controls autoplay style="max-width: 100%; max-height: 80vh;">
+                <source src="${url}" type="video/mp4">
+                Tu navegador no soporta el elemento de video.
+            </video>
+        `;
+    }
+    
+    modal.show();
+}
+
+// Función para desplazar la galería
+function scrollGallery(galleryId, direction) {
+    const gallery = document.getElementById(galleryId);
+    gallery.scrollBy({
+        left: direction,
+        behavior: 'smooth'
+    });
+    updateProgress(galleryId);
+}
+
+// Función para actualizar la barra de progreso
+function updateProgress(galleryId) {
+    const gallery = document.getElementById(galleryId);
+    const progressBar = document.getElementById('progress-' + galleryId.split('-')[1]);
+    
+    if (gallery && progressBar) {
+        const scrollLeft = gallery.scrollLeft;
+        const scrollWidth = gallery.scrollWidth - gallery.clientWidth;
+        const progress = scrollWidth > 0 ? (scrollLeft / scrollWidth) * 100 : 0;
+        progressBar.style.width = progress + '%';
+    }
+}
+
+// Auto-scroll de la galería (360°)
+function startAutoScroll(galleryId, speed = 1, pauseTime = 3000) {
+    const gallery = document.getElementById(galleryId);
+    if (!gallery) return;
+    
+    let isScrolling = false;
+    let isPaused = false;
+    let scrollDirection = 1; // 1 para derecha, -1 para izquierda
+    
+    const autoScroll = () => {
+        if (isPaused || isScrolling) return;
+        
+        const maxScroll = gallery.scrollWidth - gallery.clientWidth;
+        const currentScroll = gallery.scrollLeft;
+        
+        // Cambiar dirección al llegar a los extremos
+        if (currentScroll >= maxScroll && scrollDirection === 1) {
+            scrollDirection = -1;
+            setTimeout(() => {
+                if (!isPaused) {
+                    gallery.scrollBy({
+                        left: -speed,
+                        behavior: 'smooth'
+                    });
+                    updateProgress(galleryId);
+                }
+            }, pauseTime);
+        } else if (currentScroll <= 0 && scrollDirection === -1) {
+            scrollDirection = 1;
+            setTimeout(() => {
+                if (!isPaused) {
+                    gallery.scrollBy({
+                        left: speed,
+                        behavior: 'smooth'
+                    });
+                    updateProgress(galleryId);
+                }
+            }, pauseTime);
+        } else {
+            gallery.scrollBy({
+                left: speed * scrollDirection,
+                behavior: 'smooth'
+            });
+            updateProgress(galleryId);
+        }
+    };
+    
+    // Pausar el auto-scroll cuando el usuario interactúa
+    gallery.addEventListener('mouseenter', () => { isPaused = true; });
+    gallery.addEventListener('mouseleave', () => { isPaused = false; });
+    gallery.addEventListener('scroll', () => {
+        isScrolling = true;
+        clearTimeout(gallery.scrollTimeout);
+        gallery.scrollTimeout = setTimeout(() => {
+            isScrolling = false;
+        }, 150);
+        updateProgress(galleryId);
+    });
+    
+    // Iniciar el auto-scroll
+    setInterval(autoScroll, 50);
+}
+
+// Agregar efectos hover a los elementos de la galería
+document.addEventListener('DOMContentLoaded', function() {
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    
+    galleryItems.forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.05)';
+            this.style.boxShadow = '0 8px 25px rgba(0,195,255,0.5)';
+        });
+        
+        item.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1)';
+            this.style.boxShadow = '0 4px 15px rgba(0,195,255,0.3)';
+        });
+    });
+    
+    // Iniciar auto-scroll para todas las galerías
+    const galleries = document.querySelectorAll('[id^="gallery-"]');
+    galleries.forEach(gallery => {
+        startAutoScroll(gallery.id, 2, 2000);
+    });
+    
+    // Ocultar barras de desplazamiento
+    const style = document.createElement('style');
+    style.textContent = `
+        .gallery-scroll::-webkit-scrollbar {
+            display: none;
+        }
+        .gallery-scroll {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .gallery-nav {
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+        }
+        .gallery-nav:hover {
+            opacity: 1;
+        }
+        .gallery-container:hover .gallery-nav {
+            opacity: 1;
+        }
+    `;
+    document.head.appendChild(style);
+});
+</script>
+
 {% endblock %}

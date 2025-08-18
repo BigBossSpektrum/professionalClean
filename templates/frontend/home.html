@@ -47,7 +47,8 @@
                 <div class="card bg-dark text-white shadow w-100" style="min-height:220px;">
                     <div class="card-body d-flex flex-column justify-content-center align-items-center text-center">
                         <div style="width:60px; height:60px; display:flex; align-items:center; justify-content:center; background:#fff; border-radius:50%; border:2px solid #00c3ff; margin-bottom:10px;">
-                            <img src="/static/images/ecologico.png" alt="Ecológico" style="width:38px; height:38px; object-fit:contain; display:block;">
+                            <img src="/static/images/ecologico.png" alt="Ecológico" style="width:38px; height:38px; object-fit:contain; display:block;"
+                                 onerror="this.onerror=null;this.src='/static/images/eco_ecology_renewable_recycle_icon_186007_36YLr3O.png';">
                         </div>
                         <span class="fs-5 fw-bold mb-2">Limpieza ecológica</span>
                         <span class="small">Productos y procesos amigables con el ambiente.</span>
@@ -80,14 +81,66 @@
     <div class="row justify-content-center px-3" style="gap:24px;">
         {% for servicio in servicios %}
         <div class="col-md-6 col-lg-3 mb-4">
-            <div class="card h-100">
-                {% if servicio.imagen %}
-                <img src="{{ servicio.imagen.url }}" alt="{{ servicio.nombre }}" class="card-img-top" style="width:100%; height:180px; object-fit:cover; border-top-left-radius:8px; border-top-right-radius:8px;">
-                {% endif %}
+            <div class="card h-100" style="background: #1a1a1a; border: 2px solid #00c3ff; transition: all 0.3s ease;">
                 <div class="card-body text-center">
-                    <h5 class="card-title mb-2">{{ servicio.nombre }}</h5>
-                    <p class="card-text">{{ servicio.descripcion|truncatechars:80 }}</p>
-                    <a href="{% url 'servicio_detalle' servicio.id %}" class="btn btn-outline-primary">Ver más</a>
+                    <h5 class="card-title mb-2 text-white">{{ servicio.nombre }}</h5>
+                    <p class="card-text text-muted">{{ servicio.descripcion|truncatechars:80 }}</p>
+                    
+                    <!-- Galería mini para la página de inicio -->
+                    {% if servicio.imagenes.all %}
+                    <div class="mini-gallery mb-3" style="position: relative; height: 120px; overflow: hidden; border-radius: 8px; background: #2a2a2a;">
+                        <div class="mini-gallery-scroll" id="mini-gallery-{{ servicio.id }}" style="display: flex; gap: 5px; overflow-x: auto; scroll-behavior: smooth; height: 100%; padding: 5px; scrollbar-width: none; -ms-overflow-style: none;">
+                            {% for media in servicio.imagenes.all %}
+                                {% if media.get_file_type == 'image' %}
+                                    <div class="mini-gallery-item" style="flex: 0 0 auto; position: relative; border-radius: 4px; overflow: hidden;">
+                                        <img src="{{ media.get_imagen_url }}" 
+                                             alt="Imagen de {{ servicio.nombre }}" 
+                                             style="width: 80px; height: 110px; object-fit: cover; cursor: pointer; transition: transform 0.3s ease;"
+                                             onclick="openLightbox('{{ media.get_imagen_url }}', 'image', '{{ servicio.nombre }}')">
+                                    </div>
+                                {% elif media.get_file_type == 'video' %}
+                                    <div class="mini-gallery-item" style="flex: 0 0 auto; position: relative; border-radius: 4px; overflow: hidden;">
+                                        <video style="width: 80px; height: 110px; object-fit: cover; cursor: pointer;"
+                                               onclick="openLightbox('{{ media.get_video_url }}', 'video', '{{ servicio.nombre }}')">
+                                            <source src="{{ media.get_video_url }}" type="video/mp4">
+                                        </video>
+                                        <div class="mini-play-button" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,195,255,0.8); border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                            <i class="fas fa-play" style="color: white; font-size: 8px; margin-left: 1px;"></i>
+                                        </div>
+                                    </div>
+                                {% elif media.get_file_type == 'both' %}
+                                    <div class="mini-gallery-item" style="flex: 0 0 auto; position: relative; border-radius: 4px; overflow: hidden;">
+                                        <img src="{{ media.get_imagen_url }}" 
+                                             alt="Imagen de {{ servicio.nombre }}" 
+                                             style="width: 80px; height: 110px; object-fit: cover; cursor: pointer; transition: transform 0.3s ease;"
+                                             onclick="openLightbox('{{ media.get_imagen_url }}', 'image', '{{ servicio.nombre }}')">
+                                    </div>
+                                    <div class="mini-gallery-item" style="flex: 0 0 auto; position: relative; border-radius: 4px; overflow: hidden;">
+                                        <video style="width: 80px; height: 110px; object-fit: cover; cursor: pointer;"
+                                               onclick="openLightbox('{{ media.get_video_url }}', 'video', '{{ servicio.nombre }}')">
+                                            <source src="{{ media.get_video_url }}" type="video/mp4">
+                                        </video>
+                                        <div class="mini-play-button" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,195,255,0.8); border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                            <i class="fas fa-play" style="color: white; font-size: 8px; margin-left: 1px;"></i>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        
+                        <!-- Indicador de cantidad de archivos -->
+                        <div class="media-count" style="position: absolute; bottom: 5px; right: 5px; background: rgba(0,195,255,0.9); color: white; padding: 2px 6px; border-radius: 10px; font-size: 10px; font-weight: bold;">
+                            {{ servicio.imagenes.count }} archivo{{ servicio.imagenes.count|pluralize }}
+                        </div>
+                    </div>
+                    {% else %}
+                        <div class="no-media mb-3" style="height: 120px; display: flex; align-items: center; justify-content: center; background: #2a2a2a; border-radius: 8px; color: #666;">
+                            <i class="fas fa-image" style="font-size: 2rem; margin-right: 10px;"></i>
+                            <span>Sin multimedia</span>
+                        </div>
+                    {% endif %}
+                    
+                    <a href="{% url 'servicio_detalle' servicio.id %}" class="btn btn-outline-info">Ver más</a>
                 </div>
             </div>
         </div>
@@ -104,7 +157,7 @@
                     <img src="{% static 'images/whatsapp.png' %}" alt="WhatsApp" style="width:28px; height:28px; margin-bottom:10px;">
                     <h5 class="card-title">WhatsApp</h5>
                     <p class="card-text">Contáctanos directamente por WhatsApp para atención rápida y personalizada.</p>
-                    <a href="tel:+573142729812" target="_blank" class="btn btn-success">Enviar mensaje</a>
+                    <a href="https://wa.me/573142729812" target="_blank" class="btn btn-success">Enviar mensaje</a>
                 </div>
             </div>
         </div>
@@ -190,4 +243,127 @@
     });
     </script>
 </section>
+
+<!-- Lightbox Modal -->
+<div class="modal fade" id="lightboxModal" tabindex="-1" aria-labelledby="lightboxModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content" style="background: #1a1a1a; border: 2px solid #00c3ff;">
+            <div class="modal-header border-bottom border-secondary">
+                <h5 class="modal-title text-white" id="lightboxModalLabel">Vista ampliada</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center p-0">
+                <div id="lightboxContent"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Función para abrir el lightbox
+function openLightbox(url, type, title) {
+    const modal = new bootstrap.Modal(document.getElementById('lightboxModal'));
+    const content = document.getElementById('lightboxContent');
+    const modalTitle = document.getElementById('lightboxModalLabel');
+    
+    modalTitle.textContent = title;
+    
+    if (type === 'image') {
+        content.innerHTML = `<img src="${url}" alt="${title}" style="max-width: 100%; max-height: 80vh; object-fit: contain;">`;
+    } else if (type === 'video') {
+        content.innerHTML = `
+            <video controls autoplay style="max-width: 100%; max-height: 80vh;">
+                <source src="${url}" type="video/mp4">
+                Tu navegador no soporta el elemento de video.
+            </video>
+        `;
+    }
+    
+    modal.show();
+}
+
+// Auto-scroll para mini galerías
+function startMiniAutoScroll(galleryId, speed = 1) {
+    const gallery = document.getElementById(galleryId);
+    if (!gallery) return;
+    
+    let scrollDirection = 1; // 1 para derecha, -1 para izquierda
+    let isPaused = false;
+    
+    const autoScroll = () => {
+        if (isPaused) return;
+        
+        const maxScroll = gallery.scrollWidth - gallery.clientWidth;
+        const currentScroll = gallery.scrollLeft;
+        
+        // Cambiar dirección al llegar a los extremos
+        if (currentScroll >= maxScroll && scrollDirection === 1) {
+            scrollDirection = -1;
+        } else if (currentScroll <= 0 && scrollDirection === -1) {
+            scrollDirection = 1;
+        }
+        
+        gallery.scrollBy({
+            left: speed * scrollDirection,
+            behavior: 'smooth'
+        });
+    };
+    
+    // Pausar el auto-scroll cuando el usuario hace hover
+    gallery.addEventListener('mouseenter', () => { isPaused = true; });
+    gallery.addEventListener('mouseleave', () => { isPaused = false; });
+    
+    // Iniciar el auto-scroll
+    setInterval(autoScroll, 80);
+}
+
+// Efectos hover para las mini galerías
+document.addEventListener('DOMContentLoaded', function() {
+    // Iniciar auto-scroll para todas las mini galerías
+    const miniGalleries = document.querySelectorAll('[id^="mini-gallery-"]');
+    miniGalleries.forEach(gallery => {
+        startMiniAutoScroll(gallery.id, 1);
+    });
+    
+    // Efectos hover para elementos de galería
+    const galleryItems = document.querySelectorAll('.mini-gallery-item img, .mini-gallery-item video');
+    galleryItems.forEach(item => {
+        item.addEventListener('mouseenter', function() {
+            this.style.transform = 'scale(1.1)';
+        });
+        
+        item.addEventListener('mouseleave', function() {
+            this.style.transform = 'scale(1)';
+        });
+    });
+    
+    // Efectos hover para las cards
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+            this.style.boxShadow = '0 8px 30px rgba(0,195,255,0.4)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+            this.style.boxShadow = '0 4px 15px rgba(0,195,255,0.2)';
+        });
+    });
+    
+    // Ocultar barras de desplazamiento para mini galerías
+    const style = document.createElement('style');
+    style.textContent = `
+        .mini-gallery-scroll::-webkit-scrollbar {
+            display: none;
+        }
+        .mini-gallery-scroll {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    `;
+    document.head.appendChild(style);
+});
+</script>
+
 {% endblock %}
