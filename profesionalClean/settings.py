@@ -11,6 +11,12 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+# Configuración para notificaciones
+ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL', 'admin@professionalclean.com')
+WHATSAPP_NUMBER = os.environ.get('WHATSAPP_NUMBER', '+5731')
+WHATSAPP_API_TOKEN = os.environ.get('WHATSAPP_API_TOKEN', '')
+WHATSAPP_API_URL = os.environ.get('WHATSAPP_API_URL', 'https://api.whatsapp.com/send')
 """
 Django settings for profesionalClean project.
 

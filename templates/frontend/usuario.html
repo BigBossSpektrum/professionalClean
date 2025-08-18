@@ -84,7 +84,7 @@
                         <h5 class="text-info mb-3">¿Necesitas atención inmediata?</h5>
                         <p class="text-white mb-3">También puedes contactarnos directamente:</p>
                         <div class="d-flex justify-content-center gap-4 flex-wrap">
-                            <a href="https://wa.me/573142729812" target="_blank" class="btn btn-success">
+                            <a href="https://wa.me/573112231697" target="_blank" class="btn btn-success">
                                 <i class="fab fa-whatsapp me-2"></i>WhatsApp
                             </a>
                             <a href="tel:+573142729812" class="btn btn-primary">
@@ -113,16 +113,96 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('servicioForm').addEventListener('submit', function(e) {
         e.preventDefault();
         
-        // Simular envío exitoso (aquí irías a tu backend)
+        // Mostrar loading
         Swal.fire({
-            icon: 'success',
-            title: '¡Solicitud enviada!',
-            text: 'Hemos recibido tu solicitud. Nos pondremos en contacto contigo pronto para confirmar los detalles.',
-            confirmButtonColor: '#00c3ff',
+            title: 'Enviando solicitud...',
+            text: 'Por favor espera mientras procesamos tu solicitud',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            showConfirmButton: false,
             background: '#1a1a1a',
-            color: '#fff'
-        }).then(() => {
-            this.reset();
+            color: '#fff',
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+        
+        // Preparar datos del formulario
+        const formData = new FormData(this);
+        
+        // Enviar datos via AJAX
+        fetch('/usuario/', {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Éxito
+                Swal.fire({
+                    icon: 'success',
+                    title: '¡Solicitud enviada!',
+                    html: `
+                        <p>${data.message}</p>
+                        <div style="margin-top: 20px; padding: 15px; background: #e3f2fd; border-radius: 8px;">
+                            <h5 style="color: #00c3ff; margin-bottom: 10px;">Notificaciones enviadas:</h5>
+                            <p style="margin: 5px 0;">
+                                ${data.notificaciones.email_admin ? '✅' : '❌'} Email al administrador
+                            </p>
+                            <p style="margin: 5px 0;">
+                                ${data.notificaciones.whatsapp ? '✅' : '❌'} Notificación WhatsApp
+                            </p>
+                            <p style="margin: 5px 0;">
+                                ${data.notificaciones.confirmacion_cliente ? '✅' : '❌'} Confirmación por email
+                            </p>
+                        </div>
+                        <div style="margin-top: 15px;">
+                            <p style="color: #666; font-size: 14px;">
+                                También puedes contactarnos directamente por WhatsApp para seguimiento inmediato.
+                            </p>
+                        </div>
+                    `,
+                    confirmButtonColor: '#00c3ff',
+                    background: '#1a1a1a',
+                    color: '#fff',
+                    showDenyButton: true,
+                    denyButtonText: '💬 Ir a WhatsApp',
+                    denyButtonColor: '#25D366'
+                }).then((result) => {
+                    if (result.isDenied) {
+                        // Abrir WhatsApp
+                        const message = `Hola! Acabo de enviar una solicitud de servicio (ID: ${data.solicitud_id}). ¿Podrían confirmarme los detalles?`;
+                        window.open(`https://wa.me/573142729812?text=${encodeURIComponent(message)}`, '_blank');
+                    }
+                    // Limpiar formulario
+                    document.getElementById('servicioForm').reset();
+                });
+            } else {
+                // Error
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error al enviar',
+                    text: data.error || 'No se pudo enviar la solicitud. Intenta nuevamente.',
+                    confirmButtonColor: '#00c3ff',
+                    background: '#1a1a1a',
+                    color: '#fff'
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error de conexión',
+                text: 'No se pudo conectar con el servidor. Verifica tu conexión a internet.',
+                confirmButtonColor: '#00c3ff',
+                background: '#1a1a1a',
+                color: '#fff'
+            });
         });
     });
     

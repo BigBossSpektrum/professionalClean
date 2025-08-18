@@ -104,29 +104,71 @@ def servicio_detalle(request, servicio_id):
 	return render(request, 'frontend/servicio_detalle.html', {'servicio': servicio})
 
 def usuario(request):
+	from .notifications import enviar_email_solicitud, enviar_whatsapp_notificacion, enviar_confirmacion_cliente
 	servicios = Servicio.objects.all()
+	
 	if request.method == 'POST':
-		servicio_id = request.POST.get('servicio')
-		detalles = request.POST.get('detalles')
-		servicio = Servicio.objects.get(pk=servicio_id)
-		if request.user.is_authenticated:
-			Solicitud.objects.create(
-				usuario=request.user,
-				nombre=request.user.get_full_name() or request.user.username,
-				email=request.user.email,
-				servicio=servicio,
-				detalles=detalles
-			)
-		else:
+		try:
+			# Obtener todos los datos del formulario
 			nombre = request.POST.get('nombre')
 			email = request.POST.get('email')
-			Solicitud.objects.create(
+			telefono = request.POST.get('telefono')
+			direccion = request.POST.get('direccion')
+			servicio_id = request.POST.get('servicio')
+			fecha_preferida = request.POST.get('fecha')
+			hora_preferida = request.POST.get('hora')
+			detalles = request.POST.get('detalles', '')
+			
+			# Validar que todos los campos requeridos estén presentes
+			if not all([nombre, email, telefono, direccion, servicio_id, fecha_preferida, hora_preferida]):
+				return JsonResponse({
+					'success': False, 
+					'error': 'Todos los campos son obligatorios'
+				})
+			
+			# Obtener el servicio
+			servicio = Servicio.objects.get(pk=servicio_id)
+			
+			# Crear la solicitud
+			solicitud = Solicitud.objects.create(
+				usuario=request.user if request.user.is_authenticated else None,
 				nombre=nombre,
 				email=email,
+				telefono=telefono,
+				direccion=direccion,
 				servicio=servicio,
+				fecha_preferida=fecha_preferida,
+				hora_preferida=hora_preferida,
 				detalles=detalles
 			)
-		return redirect('home')
+			
+			# Enviar notificaciones
+			email_enviado = enviar_email_solicitud(solicitud)
+			whatsapp_enviado = enviar_whatsapp_notificacion(solicitud)
+			confirmacion_enviada = enviar_confirmacion_cliente(solicitud)
+			
+			return JsonResponse({
+				'success': True,
+				'message': 'Solicitud enviada correctamente. Te contactaremos pronto.',
+				'solicitud_id': solicitud.id,
+				'notificaciones': {
+					'email_admin': email_enviado,
+					'whatsapp': whatsapp_enviado,
+					'confirmacion_cliente': confirmacion_enviada
+				}
+			})
+			
+		except Servicio.DoesNotExist:
+			return JsonResponse({
+				'success': False, 
+				'error': 'El servicio seleccionado no existe'
+			})
+		except Exception as e:
+			return JsonResponse({
+				'success': False, 
+				'error': f'Error procesando la solicitud: {str(e)}'
+			})
+	
 	return render(request, 'frontend/usuario.html', {'servicios': servicios})
 
 

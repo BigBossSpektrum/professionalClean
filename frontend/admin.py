@@ -9,9 +9,23 @@ class ServicioAdmin(admin.ModelAdmin):
 
 @admin.register(Solicitud)
 class SolicitudAdmin(admin.ModelAdmin):
-    list_display = ('id', 'usuario', 'servicio', 'detalles', 'fecha')
-    search_fields = ('usuario__username', 'servicio__nombre')
-    list_filter = ('servicio', 'fecha')
+    list_display = ('id', 'nombre', 'email', 'servicio', 'fecha_preferida', 'hora_preferida', 'estado', 'fecha_creacion')
+    search_fields = ('nombre', 'email', 'telefono', 'servicio__nombre')
+    list_filter = ('servicio', 'estado', 'fecha_preferida', 'fecha_creacion')
+    readonly_fields = ('fecha_creacion',)
+    list_editable = ('estado',)
+    
+    fieldsets = (
+        ('Información del Cliente', {
+            'fields': ('nombre', 'email', 'telefono', 'direccion')
+        }),
+        ('Detalles del Servicio', {
+            'fields': ('servicio', 'fecha_preferida', 'hora_preferida', 'detalles')
+        }),
+        ('Estado y Tracking', {
+            'fields': ('estado', 'usuario', 'fecha_creacion')
+        }),
+    )
 
 @admin.register(Usuario)
 class UsuarioAdmin(admin.ModelAdmin):

@@ -61,9 +61,22 @@ class Solicitud(models.Model):
 	usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, null=True, blank=True)
 	nombre = models.CharField(max_length=100)
 	email = models.EmailField()
+	telefono = models.CharField(max_length=20, default='')
+	direccion = models.CharField(max_length=255, default='')
 	servicio = models.ForeignKey(Servicio, on_delete=models.CASCADE)
+	fecha_preferida = models.DateField(null=True, blank=True)
+	hora_preferida = models.CharField(max_length=10, default='')
 	detalles = models.TextField(blank=True)
-	fecha = models.DateTimeField(auto_now_add=True)
+	fecha_creacion = models.DateTimeField(auto_now_add=True)
+	estado = models.CharField(max_length=20, choices=[
+		('pendiente', 'Pendiente'),
+		('confirmado', 'Confirmado'),
+		('realizado', 'Realizado'),
+		('cancelado', 'Cancelado'),
+	], default='pendiente')
 
 	def __str__(self):
-		return f"{self.nombre} - {self.servicio.nombre}"
+		return f"{self.nombre} - {self.servicio.nombre} - {self.fecha_preferida or 'Sin fecha'}"
+
+	class Meta:
+		ordering = ['-fecha_creacion']
